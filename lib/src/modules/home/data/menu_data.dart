@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // استيراد الـ Model
-import 'package:one_click/src/modules/home/models/nav_item_model.dart';
+import '../models/nav_item_model.dart';
 // --- 1. استيراد المسارات الصحيحة ---
 import 'package:one_click/src/routes/app_pages.dart';
 
@@ -13,9 +13,9 @@ class MenuData {
       title: 'الرئيسية',
       icon: Icons.grid_view_outlined,
       children: [
-        // --- 2. التأكد من استخدام Routes ---
-        NavSubItemModel(title: 'الوحدات', route: Routes.units), 
-        NavSubItemModel(title: 'المنيوهات', route: '/menus'), // (مسار مؤقت)
+        NavSubItemModel(title: 'الوحدات', route: Routes.units),
+        // --- 2. (تعديل) ربط المنيوهات بالمسار الجديد ---
+        NavSubItemModel(title: 'المنيوهات', route: Routes.menus), 
         NavSubItemModel(title: 'الاضافات', route: '/additions'),
         NavSubItemModel(title: 'الأقسام', route: '/sections'),
         NavSubItemModel(title: 'الاصناف', route: '/items'),

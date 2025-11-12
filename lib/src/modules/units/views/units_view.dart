@@ -76,6 +76,18 @@ class UnitsView extends GetView<UnitsController> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        // --- (تعديل) العنوان أولاً (ليظهر يميناً) ---
+        const Text(
+          'الوحدات',
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
+          ),
+        ),
+
+        // --- (تعديل) الزر ثانياً (ليظهر يساراً) ---
         ElevatedButton(
           onPressed: () {
             controller.toggleFilterVisibility();
@@ -89,16 +101,6 @@ class UnitsView extends GetView<UnitsController> {
             foregroundColor: Colors.white,
           ),
           child: const Icon(Icons.filter_list, size: 20),
-        ),
-
-        const Text(
-          'الوحدات',
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: AppColors.primary,
-          ),
         ),
       ],
     );

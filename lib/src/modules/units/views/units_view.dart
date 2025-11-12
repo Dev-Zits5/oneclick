@@ -16,7 +16,7 @@ class UnitsView extends GetView<UnitsController> {
       controller: homeController.scrollController,
       // (تعديل) جعل الخلفية شفافة ليظهر التدرج
       // child: Container(
-      //   color: Colors.transparent,
+      //   color: Colors.transparent,
       child: Column(
         children: [
           // (تعديل) الهيدر الآن بخلفية شفافة
@@ -39,6 +39,10 @@ class UnitsView extends GetView<UnitsController> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16.0),
+                  // --- (تعديل هام) ---
+                  // إضافة clipBehavior لقص زوايا الجدول الداخلية
+                  clipBehavior: Clip.antiAlias,
+                  // --- (نهاية التعديل) ---
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16.0),
@@ -54,7 +58,7 @@ class UnitsView extends GetView<UnitsController> {
                     children: [
                       SizedBox(
                         width: double.infinity,
-                        child: Obx(() => _buildDataTable()),
+                        child: Obx(() => _buildDataTable()), // <-- تم تعديل هذه الدالة بالكامل
                       ),
                       const SizedBox(height: 16),
                       _buildPaginationControls(),
@@ -71,7 +75,7 @@ class UnitsView extends GetView<UnitsController> {
     );
   }
 
-  // (تعديل) شريط العنوان وزر الفلتر
+  // (الكود هنا لم يتغير)
   Widget _buildPageTitleBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,7 +110,7 @@ class UnitsView extends GetView<UnitsController> {
     );
   }
 
-  // --- (جديد) منطقة الفلترة (مطابقة للصورة 1) ---
+  // (الكود هنا لم يتغير)
   Widget _buildFilterArea() {
     return Obx(() {
       return Visibility(
@@ -124,7 +128,7 @@ class UnitsView extends GetView<UnitsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // --- 1. المحافظة ---
+              // ... (محتوى الفلتر كما هو)
               const Text(
                 'المحافظة',
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -205,50 +209,134 @@ class UnitsView extends GetView<UnitsController> {
     });
   }
 
+  // --- (
+  // --- ( 🌟 تم تعديل هذه الدالة بالكامل 🌟 ) ---
+  // ---
   Widget _buildDataTable() {
-    // (الكود هنا لم يتغير)
+    // --- (جديد) تعريف ستايل الخطوط ---
+    const TextStyle headerStyle = TextStyle(
+      fontSize: 13.0, // <-- خط أصغر
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+    );
+
+    const TextStyle bodyStyle = TextStyle(
+      fontSize: 12.0, // <-- خط أصغر
+      color: Colors.black87,
+    );
+
+    // --- (جديد) لون الحدود ---
+    final Color borderColor = Colors.grey.shade300;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: DataTable(
-        headingRowColor: WidgetStateProperty.all(AppColors.primary),
-        headingTextStyle: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+      child: Table(
+        // --- (جديد) تحديد عرض الأعمدة ---
+        // يمكنك تعديل الأرقام هنا لتناسب محتواك
+        columnWidths: const {
+          0: FixedColumnWidth(50.0),  // #
+          1: FixedColumnWidth(120.0), // اسم الوحده
+          2: FixedColumnWidth(150.0), // اسم الوحده الاساسية
+          3: FixedColumnWidth(160.0), // الكميه من الوحده الاساسية
+          4: FixedColumnWidth(100.0), // وحده اساسيه ؟
+        },
+        // --- (جديد) هذا هو أهم جزء لإضافة الخطوط ---
+        border: TableBorder.all(
+          color: borderColor,
+          width: 1.0,
+          borderRadius: BorderRadius.zero, // نعتمد على الـ ClipRRect الخارجي
         ),
-        checkboxHorizontalMargin: 12,
-        columns: const [
-          DataColumn(label: Text('#')),
-          DataColumn(label: Text('اسم الوحده')),
-          DataColumn(label: Text('اسم الوحده الاساسية')),
-          DataColumn(label: Text('الكميه من الوحده الاساسية')),
-          DataColumn(label: Text('وحده اساسيه ؟')),
+        // --- (نهاية التعديل) ---
+        children: [
+          // --- 1. رأس الجدول (Header) ---
+          TableRow(
+            // --- (جديد) خلفية الهيدر ---
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+            ),
+            children: [
+              _buildHeaderCell('#', headerStyle),
+              _buildHeaderCell('اسم الوحده', headerStyle),
+              _buildHeaderCell('اسم الوحده الاساسية', headerStyle),
+              _buildHeaderCell('الكميه من الوحده الاساسية', headerStyle),
+              _buildHeaderCell('وحده اساسيه ؟', headerStyle),
+            ],
+          ),
+          
+          // --- 2. صفوف البيانات (Body) ---
+          ...controller.units.map((unit) {
+            return TableRow(
+              // --- (جديد) خلفية الصفوف (يمكنك جعلها متغيرة) ---
+              decoration: BoxDecoration(
+                color: controller.units.indexOf(unit).isEven
+                    ? Colors.white
+                    : Colors.grey.shade50, // لعمل تلوين متبادل (اختياري)
+              ),
+              children: [
+                _buildBodyCell(unit.id.toString(), bodyStyle),
+                _buildBodyCell(unit.name, bodyStyle),
+                _buildBodyCell(unit.baseUnitName, bodyStyle),
+                _buildBodyCell(unit.quantity.toString(), bodyStyle),
+                // --- (جديد) خلية خاصة للـ Checkbox ---
+                _buildCheckboxCell(unit.isBaseUnit),
+              ],
+            );
+          }).toList(),
         ],
-        dataRowMinHeight: 48,
-        dataRowMaxHeight: 48,
-        rows:
-            controller.units.map((unit) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(unit.id.toString())),
-                  DataCell(Text(unit.name)),
-                  DataCell(Text(unit.baseUnitName)),
-                  DataCell(Text(unit.quantity.toString())),
-                  DataCell(
-                    Checkbox(
-                      fillColor: WidgetStateProperty.all(AppColors.primary),
-                      value: unit.isBaseUnit,
-                      onChanged: (val) {},
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
       ),
     );
   }
 
+  // --- ( 🌟 دالة مساعدة جديدة 🌟 ) ---
+  // لبناء خلايا الهيدر
+  TableCell _buildHeaderCell(String text, TextStyle style) {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+        child: Text(
+          text,
+          style: style,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  // --- ( 🌟 دالة مساعدة جديدة 🌟 ) ---
+  // لبناء خلايا المحتوى
+  TableCell _buildBodyCell(String text, TextStyle style) {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+        child: Text(
+          text,
+          style: style,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  // --- ( 🌟 دالة مساعدة جديدة 🌟 ) ---
+  // لبناء خلية الـ Checkbox
+  TableCell _buildCheckboxCell(bool value) {
+    return TableCell(
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Center(
+        child: Checkbox(
+          fillColor: WidgetStateProperty.all(AppColors.primary),
+          value: value,
+          onChanged: (val) {}, // لا تفعل شيئاً عند الضغط
+        ),
+      ),
+    );
+  }
+
+
+  // (الكود هنا لم يتغير)
   Widget _buildPaginationControls() {
-    // (الكود هنا لم يتغير)
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -265,12 +353,12 @@ class UnitsView extends GetView<UnitsController> {
     );
   }
 
+  // (الكود هنا لم يتغير)
   Widget _buildPageButton({
     required Widget child,
     required VoidCallback onTap,
     bool isSelected = false,
   }) {
-    // (الكود هنا لم يتغير)
     return Material(
       color: isSelected ? AppColors.primary : Colors.grey[200],
       borderRadius: BorderRadius.circular(8),

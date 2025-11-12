@@ -19,7 +19,7 @@ class MenuData {
         NavSubItemModel(title: 'الاضافات', route: Routes.additions),
         NavSubItemModel(title: 'الأقسام', route: Routes.sections),
         NavSubItemModel(title: 'الاصناف', route: Routes.items),
-        NavSubItemModel(title: 'المجموعات', route: '/groups'),
+        NavSubItemModel(title: 'المجموعات', route: Routes.groups),
         NavSubItemModel(title: 'أقسام الخامات', route: '/material-sections'),
         NavSubItemModel(title: 'الخامات', route: '/materials'),
         NavSubItemModel(title: 'المستخدمين', route: '/users'),

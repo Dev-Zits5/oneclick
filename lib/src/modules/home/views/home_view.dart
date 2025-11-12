@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:one_click/src/modules/Additions/bindings/additions_binding.dart';
 import 'package:one_click/src/modules/Additions/views/additions_view.dart';
+import 'package:one_click/src/modules/Groups/bindings/groups_binding.dart';
+import 'package:one_click/src/modules/Groups/views/groups_view.dart';
 import 'package:one_click/src/modules/Items/bindings/items_binding.dart';
 import 'package:one_click/src/modules/Items/views/items_view.dart';
 import 'package:one_click/src/modules/sections/bindings/sections_binding.dart';
@@ -75,6 +77,11 @@ class HomeView extends GetView<HomeController> {
                 return GetPageRoute(
                   page: () =>   ItemsView(),
                   binding: ItemsBinding(),
+                );
+                case Paths.groups:
+                return GetPageRoute(
+                  page: () =>   GroupsView(),
+                  binding: GroupsBinding(),
                 );
               
               default:
